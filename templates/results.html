@@ -1,0 +1,385 @@
+{% extends "base.html" %}
+
+{% block title %}Results - EuroSAT Satellite Image Classifier{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-4">
+            <div class="col">
+                <div class="d-flex justify-content-between align-items-center">
+                    <h2 class="fw-bold">
+                        <i class="fas fa-chart-line"></i> Classification Results
+                    </h2>
+                    <a href="{{ url_for('index') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-plus"></i> Classify Another Image
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <!-- Image and Basic Results -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-image"></i> Uploaded Image
+                        </h5>
+                    </div>
+                    <div class="card-body text-center">
+                        <img src="{{ image_path }}" alt="Uploaded satellite image" class="result-image mb-3">
+                        <h6 class="text-muted">{{ result.original_filename }}</h6>
+                        <small class="text-muted">
+                            Processed on {{ result.timestamp[:19] | replace('T', ' ') }}
+                        </small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Classification Results -->
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-brain"></i> AI Prediction
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <!-- Main Prediction -->
+                        <div class="text-center mb-4">
+                            <h3 class="text-primary fw-bold">{{ result.predicted_class }}</h3>
+                            <span class="badge confidence-badge 
+                                {% if result.confidence > 0.8 %}bg-success
+                                {% elif result.confidence > 0.6 %}bg-warning
+                                {% else %}bg-danger{% endif %}">
+                                {{ "%.1f" | format(result.confidence * 100) }}% Confidence
+                            </span>
+                        </div>
+
+                        <!-- Model Info -->
+                        <div class="mb-3">
+                            <small class="text-muted">
+                                <i class="fas fa-robot"></i> Model: {{ result.model_used.upper() }}
+                            </small>
+                        </div>
+
+                        <!-- Confidence Interpretation -->
+                        <div class="alert 
+                            {% if result.confidence > 0.8 %}alert-success
+                            {% elif result.confidence > 0.6 %}alert-warning
+                            {% else %}alert-danger{% endif %}" role="alert">
+                            <i class="fas fa-info-circle"></i>
+                            {% if result.confidence > 0.8 %}
+                                <strong>High Confidence:</strong> The model is very confident in this prediction.
+                            {% elif result.confidence > 0.6 %}
+                                <strong>Medium Confidence:</strong> The model has moderate confidence in this prediction.
+                            {% else %}
+                                <strong>Low Confidence:</strong> The model is uncertain about this prediction.
+                            {% endif %}
+                        </div>
+
+                        <!-- Map Button -->
+                        <div class="d-grid">
+                            <button class="btn btn-info" onclick="showMapModal()">
+                                <i class="fas fa-map"></i> View on Interactive Map
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Detailed Probabilities -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header bg-info text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-bar"></i> All Class Probabilities
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            {% for class_name, probability in result.class_probabilities.items() %}
+                                <div class="col-lg-6 mb-3">
+                                    <div class="class-probability">
+                                        <div class="d-flex justify-content-between mb-1">
+                                            <span class="fw-bold">{{ class_name }}</span>
+                                            <span class="text-muted">{{ "%.1f" | format(probability * 100) }}%</span>
+                                        </div>
+                                        <div class="progress probability-bar">
+                                            <div class="progress-bar 
+                                                {% if class_name == result.predicted_class %}bg-success
+                                                {% else %}bg-secondary{% endif %}" 
+                                                role="progressbar" 
+                                                style="width: {{ probability * 100 }}%">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Probability Chart -->
+        <div class="row">
+            <div class="col-12 mb-4">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h5 class="card-title mb-0">
+                            <i class="fas fa-chart-pie"></i> Probability Distribution
+                        </h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="probabilityChart" width="400" height="200"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Map Modal -->
+<div class="modal fade" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="mapModalLabel">
+                    <i class="fas fa-map"></i> Interactive Land Usage Map
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <div class="row mb-3">
+                    <div class="col-md-6">
+                        <label for="latitude" class="form-label">Latitude:</label>
+                        <input type="number" class="form-control" id="latitude" value="52.5200" step="0.0001">
+                    </div>
+                    <div class="col-md-6">
+                        <label for="longitude" class="form-label">Longitude:</label>
+                        <input type="number" class="form-control" id="longitude" value="13.4050" step="0.0001">
+                    </div>
+                </div>
+                <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-3">
+                    <button class="btn btn-primary" onclick="updateMap()">
+                        <i class="fas fa-sync"></i> Update Map
+                    </button>
+                    <button class="btn btn-success" onclick="analyzeCoordinates()">
+                        <i class="fas fa-search"></i> Analyze Location
+                    </button>
+                </div>
+                <div id="map" class="map-container"></div>
+                <div id="geeAnalysis" class="mt-3" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+let map;
+let marker;
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Create probability chart
+    createProbabilityChart();
+});
+
+function createProbabilityChart() {
+    const ctx = document.getElementById('probabilityChart').getContext('2d');
+    const probabilities = {{ result.class_probabilities | tojsonfilter }};
+    
+    const labels = Object.keys(probabilities);
+    const data = Object.values(probabilities).map(p => p * 100);
+    const colors = labels.map((label, index) => {
+        if (label === '{{ result.predicted_class }}') {
+            return '#28a745'; // Green for predicted class
+        }
+        return `hsl(${index * 360 / labels.length}, 70%, 60%)`;
+    });
+
+    new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: labels,
+            datasets: [{
+                label: 'Probability (%)',
+                data: data,
+                backgroundColor: colors,
+                borderColor: colors.map(color => color.replace('60%', '40%')),
+                borderWidth: 1
+            }]
+        },
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true,
+                    max: 100,
+                    ticks: {
+                        callback: function(value) {
+                            return value + '%';
+                        }
+                    }
+                }
+            },
+            plugins: {
+                legend: {
+                    display: false
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            return context.parsed.y.toFixed(1) + '%';
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+function showMapModal() {
+    const modal = new bootstrap.Modal(document.getElementById('mapModal'));
+    modal.show();
+    
+    // Initialize map when modal is shown
+    setTimeout(function() {
+        if (!map) {
+            initializeMap();
+        }
+    }, 300);
+}
+
+function initializeMap() {
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lon = parseFloat(document.getElementById('longitude').value);
+    
+    map = L.map('map').setView([lat, lon], 13);
+    
+    // Add tile layers
+    const osmLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '© OpenStreetMap contributors'
+    });
+    
+    const satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Esri, DigitalGlobe, GeoEye, Earthstar Geographics, CNES/Airbus DS, USDA, USGS, AeroGRID, IGN, and the GIS User Community'
+    });
+    
+    osmLayer.addTo(map);
+    
+    // Layer control
+    const baseLayers = {
+        "OpenStreetMap": osmLayer,
+        "Satellite": satelliteLayer
+    };
+    L.control.layers(baseLayers).addTo(map);
+    
+    // Add marker
+    marker = L.marker([lat, lon]).addTo(map)
+        .bindPopup(`<b>Analysis Location</b><br>Lat: ${lat}<br>Lon: ${lon}<br>Predicted: {{ result.predicted_class }}`);
+    
+    // Allow clicking to update coordinates
+    map.on('click', function(e) {
+        const newLat = e.latlng.lat.toFixed(4);
+        const newLon = e.latlng.lng.toFixed(4);
+        
+        document.getElementById('latitude').value = newLat;
+        document.getElementById('longitude').value = newLon;
+        
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([newLat, newLon]).addTo(map)
+            .bindPopup(`<b>Analysis Location</b><br>Lat: ${newLat}<br>Lon: ${newLon}<br>Predicted: {{ result.predicted_class }}`);
+    });
+}
+
+function updateMap() {
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lon = parseFloat(document.getElementById('longitude').value);
+    
+    if (map) {
+        map.setView([lat, lon], 13);
+        
+        if (marker) {
+            map.removeLayer(marker);
+        }
+        marker = L.marker([lat, lon]).addTo(map)
+            .bindPopup(`<b>Analysis Location</b><br>Lat: ${lat}<br>Lon: ${lon}<br>Predicted: {{ result.predicted_class }}`);
+    }
+}
+
+function analyzeCoordinates() {
+    const lat = parseFloat(document.getElementById('latitude').value);
+    const lon = parseFloat(document.getElementById('longitude').value);
+    const analysisDiv = document.getElementById('geeAnalysis');
+    
+    analysisDiv.innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Analyzing location with Google Earth Engine...</div>';
+    analysisDiv.style.display = 'block';
+    
+    fetch('/api/analyze_coordinates', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            lat: lat,
+            lon: lon,
+            predicted_class: '{{ result.predicted_class }}'
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.error) {
+            analysisDiv.innerHTML = `
+                <div class="alert alert-warning">
+                    <i class="fas fa-exclamation-triangle"></i> ${data.error}
+                </div>
+            `;
+        } else {
+            let html = '<div class="gee-analysis">';
+            html += '<h6><i class="fas fa-satellite"></i> Google Earth Engine Analysis</h6>';
+            
+            if (data.gee_analysis && data.gee_analysis.land_cover_distribution) {
+                html += `<p><strong>Dominant Land Cover:</strong> ${data.gee_analysis.dominant_land_cover}</p>`;
+                html += `<p><strong>Confidence Score:</strong> ${(data.confidence_score * 100).toFixed(1)}%</p>`;
+                
+                html += '<h6>Land Cover Distribution:</h6><ul>';
+                for (const [landType, stats] of Object.entries(data.gee_analysis.land_cover_distribution)) {
+                    if (stats.percentage > 1) {
+                        html += `<li>${landType}: ${stats.percentage}%</li>`;
+                    }
+                }
+                html += '</ul>';
+                
+                if (data.recommendations && data.recommendations.length > 0) {
+                    html += '<h6>Recommendations:</h6><ul>';
+                    data.recommendations.forEach(rec => {
+                        html += `<li>${rec}</li>`;
+                    });
+                    html += '</ul>';
+                }
+            }
+            
+            html += '</div>';
+            analysisDiv.innerHTML = html;
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        analysisDiv.innerHTML = `
+            <div class="alert alert-danger">
+                <i class="fas fa-exclamation-circle"></i> Error analyzing coordinates: ${error.message}
+            </div>
+        `;
+    });
+}
+</script>
+{% endblock %}

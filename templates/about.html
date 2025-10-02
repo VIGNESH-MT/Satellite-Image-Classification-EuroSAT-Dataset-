@@ -1,0 +1,316 @@
+{% extends "base.html" %}
+
+{% block title %}About - EuroSAT Satellite Image Classifier{% endblock %}
+
+{% block content %}
+<section class="py-5">
+    <div class="container">
+        <!-- Header -->
+        <div class="row mb-5">
+            <div class="col text-center">
+                <h1 class="display-4 fw-bold">
+                    <i class="fas fa-info-circle"></i> About EuroSAT Classifier
+                </h1>
+                <p class="lead text-muted">
+                    Advanced satellite image classification using deep learning and Google Earth Engine
+                </p>
+            </div>
+        </div>
+
+        <!-- Project Overview -->
+        <div class="row mb-5">
+            <div class="col-lg-8 mx-auto">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h3 class="card-title mb-0">
+                            <i class="fas fa-rocket"></i> Project Overview
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <p>
+                            The EuroSAT Satellite Image Classifier is a comprehensive machine learning project 
+                            that combines state-of-the-art deep learning models with Google Earth Engine's 
+                            powerful geospatial analysis capabilities to classify satellite images into 
+                            different land use categories.
+                        </p>
+                        <p>
+                            This project demonstrates the practical application of transfer learning, 
+                            computer vision, and geospatial analysis in solving real-world environmental 
+                            monitoring and land use classification challenges.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technical Details -->
+        <div class="row mb-5">
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-brain"></i> Deep Learning Models
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <h6>VGG16 Architecture</h6>
+                        <ul>
+                            <li>Pre-trained on ImageNet</li>
+                            <li>Transfer learning with frozen base layers</li>
+                            <li>Custom classification head</li>
+                            <li>Optimized for speed and accuracy</li>
+                        </ul>
+                        
+                        <h6>ResNet50 Architecture</h6>
+                        <ul>
+                            <li>Residual connections for deeper networks</li>
+                            <li>Better gradient flow</li>
+                            <li>Higher accuracy for complex patterns</li>
+                            <li>Fine-tuning capabilities</li>
+                        </ul>
+                        
+                        <h6>Training Features</h6>
+                        <ul>
+                            <li>Data augmentation</li>
+                            <li>Early stopping</li>
+                            <li>Learning rate scheduling</li>
+                            <li>Model checkpointing</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-lg-6 mb-4">
+                <div class="card h-100">
+                    <div class="card-header bg-info text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-globe"></i> Google Earth Engine
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <h6>Satellite Data Sources</h6>
+                        <ul>
+                            <li>Sentinel-2 imagery</li>
+                            <li>ESA WorldCover land cover data</li>
+                            <li>Real-time data access</li>
+                            <li>Cloud filtering</li>
+                        </ul>
+                        
+                        <h6>Analysis Capabilities</h6>
+                        <ul>
+                            <li>Land cover distribution</li>
+                            <li>Temporal analysis</li>
+                            <li>Statistical summaries</li>
+                            <li>Confidence validation</li>
+                        </ul>
+                        
+                        <h6>Visualization</h6>
+                        <ul>
+                            <li>Interactive maps</li>
+                            <li>Multiple tile layers</li>
+                            <li>Real-time analysis</li>
+                            <li>Coordinate-based queries</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dataset Information -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-warning text-dark">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-database"></i> EuroSAT Dataset
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h6>Dataset Details</h6>
+                                <ul>
+                                    <li><strong>Total Images:</strong> 27,000</li>
+                                    <li><strong>Image Size:</strong> 64x64 pixels</li>
+                                    <li><strong>Spectral Bands:</strong> RGB</li>
+                                    <li><strong>Source:</strong> Sentinel-2 satellite</li>
+                                    <li><strong>Coverage:</strong> 34 European countries</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6>Land Use Classes ({{ classes|length }})</h6>
+                                <div class="row">
+                                    {% for class_name in classes %}
+                                        <div class="col-6 mb-2">
+                                            <span class="badge bg-secondary">{{ class_name }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Technology Stack -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-dark text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-code"></i> Technology Stack
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6><i class="fas fa-brain text-primary"></i> Machine Learning</h6>
+                                <ul class="list-unstyled">
+                                    <li>TensorFlow 2.13</li>
+                                    <li>Keras</li>
+                                    <li>scikit-learn</li>
+                                    <li>NumPy</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6><i class="fas fa-image text-success"></i> Computer Vision</h6>
+                                <ul class="list-unstyled">
+                                    <li>OpenCV</li>
+                                    <li>Pillow</li>
+                                    <li>Matplotlib</li>
+                                    <li>Seaborn</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6><i class="fas fa-globe text-info"></i> Geospatial</h6>
+                                <ul class="list-unstyled">
+                                    <li>Google Earth Engine</li>
+                                    <li>Folium</li>
+                                    <li>Leaflet</li>
+                                </ul>
+                            </div>
+                            <div class="col-lg-3 col-md-6 mb-3">
+                                <h6><i class="fas fa-server text-warning"></i> Web Framework</h6>
+                                <ul class="list-unstyled">
+                                    <li>Flask</li>
+                                    <li>Bootstrap 5</li>
+                                    <li>Chart.js</li>
+                                    <li>Font Awesome</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Features -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-secondary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-star"></i> Key Features
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-upload text-primary"></i> Easy Upload Interface</h6>
+                                <p>Drag-and-drop file upload with support for multiple image formats (JPG, PNG, TIFF).</p>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-robot text-success"></i> Multiple AI Models</h6>
+                                <p>Choose between VGG16 and ResNet50 architectures based on your accuracy and speed requirements.</p>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-chart-bar text-info"></i> Detailed Results</h6>
+                                <p>View confidence scores, probability distributions, and interactive visualizations.</p>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-map text-warning"></i> Interactive Maps</h6>
+                                <p>Explore results on interactive maps with Google Earth Engine integration.</p>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-satellite text-danger"></i> Real-time Analysis</h6>
+                                <p>Get real-time land cover analysis and validation using satellite data.</p>
+                            </div>
+                            <div class="col-lg-6 mb-3">
+                                <h6><i class="fas fa-mobile-alt text-dark"></i> Responsive Design</h6>
+                                <p>Works seamlessly on desktop, tablet, and mobile devices.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Usage Instructions -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-question-circle"></i> How to Use
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-6">
+                                <h6>Step 1: Upload Image</h6>
+                                <p>Select or drag-and-drop a satellite image in JPG, PNG, or TIFF format. Maximum file size is 16MB.</p>
+                                
+                                <h6>Step 2: Choose Model</h6>
+                                <p>Select between VGG16 (faster) or ResNet50 (more accurate) based on your needs.</p>
+                                
+                                <h6>Step 3: View Results</h6>
+                                <p>Analyze the classification results, confidence scores, and probability distributions.</p>
+                            </div>
+                            <div class="col-lg-6">
+                                <h6>Step 4: Explore Maps</h6>
+                                <p>Use the interactive map to explore the location and validate results with real satellite data.</p>
+                                
+                                <h6>Step 5: Analyze Location</h6>
+                                <p>Click on the map or enter coordinates to get Google Earth Engine analysis for any location.</p>
+                                
+                                <h6>Tips for Best Results</h6>
+                                <ul>
+                                    <li>Use high-quality satellite images</li>
+                                    <li>Ensure images show clear land use patterns</li>
+                                    <li>Try both models for comparison</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- API Information -->
+        <div class="row mb-5">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header bg-success text-white">
+                        <h4 class="card-title mb-0">
+                            <i class="fas fa-code"></i> API Endpoints
+                        </h4>
+                    </div>
+                    <div class="card-body">
+                        <h6>Available Endpoints:</h6>
+                        <ul>
+                            <li><code>GET /api/model_info</code> - Get information about loaded models</li>
+                            <li><code>POST /api/analyze_coordinates</code> - Analyze specific coordinates with GEE</li>
+                        </ul>
+                        
+                        <h6>Example API Usage:</h6>
+                        <pre><code>curl -X POST /api/analyze_coordinates \
+  -H "Content-Type: application/json" \
+  -d '{"lat": 52.5200, "lon": 13.4050, "predicted_class": "Residential"}'</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+{% endblock %}
