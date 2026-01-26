@@ -349,22 +349,8 @@ Example notebooks are available in the `notebooks/` directory:
 - Include unit tests for new features
 - Update documentation as needed
 
-## 📄 License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## 🙏 Acknowledgments
-
-- **EuroSAT Dataset**: [Helber et al., 2019](https://github.com/phelber/EuroSAT)
-- **Google Earth Engine**: For satellite data access
-- **TensorFlow Team**: For the deep learning framework
-- **Flask Community**: For the web framework
-
-## 📞 Support
-
-- **Issues**: [GitHub Issues](https://github.com/yourusername/eurosat-classifier/issues)
-- **Discussions**: [GitHub Discussions](https://github.com/yourusername/eurosat-classifier/discussions)
-- **Email**: your.email@example.com
 
 ## 🔮 Future Enhancements
 
@@ -376,10 +362,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - [ ] Cloud deployment guides
 - [ ] Advanced data augmentation
 - [ ] Model ensemble methods
-
----
-
-**Made with ❤️ for the Earth observation community**
-=======
-# Satellite-Image-Classification-EuroSAT-Dataset-
->>>>>>> d460abd59d5d2d3eadf195e8dcea2af38e7e6f75
