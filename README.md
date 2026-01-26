@@ -1,6 +1,4 @@
-<<<<<<< HEAD (GitHub remote content)
->>>>>>> origin/main
-# 🛰️ EuroSAT Satellite Image Classification
+EuroSAT Satellite Image Classification
 
 A comprehensive machine learning project for satellite image classification using the EuroSAT dataset. This project combines state-of-the-art deep learning models (VGG16 and ResNet50) with Google Earth Engine integration to provide accurate land use classification and interactive geospatial analysis.
 
