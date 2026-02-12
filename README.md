@@ -73,19 +73,88 @@ explicitly.
 ## Architectural Overview
 
 ```
-Satellite Imagery
-        ↓
-Tile Segmentation
-        ↓
-Preprocessing & Normalization
-        ↓
-CNN Model Inference
-        ↓
-Confidence Calibration
-        ↓
-Explainability Layer
-        ↓
-Structured Outputs (API / Batch Reports)
+geovision-intelligence-platform/
+│
+├── README.md
+├── pyproject.toml
+├── Dockerfile
+├── docker-compose.yml
+├── .env.example
+│
+├── platform/                          # Serving & orchestration layer
+│   ├── main.py                        # FastAPI entrypoint
+│   ├── api/
+│   │   ├── v1/
+│   │   │   ├── routes.py              # /predict /batch /health
+│   │   │   └── schemas.py             # Typed contracts
+│   │   └── middleware.py              # Auth, logging, rate limit
+│   │
+│   ├── services/
+│   │   ├── inference_service.py
+│   │   ├── tiling_service.py
+│   │   └── reporting_service.py
+│   │
+│   └── core/
+│       ├── config.py
+│       ├── logging.py
+│       └── lifecycle.py
+│
+├── intelligence/                      # ML & Geospatial intelligence
+│   ├── ingestion/
+│   │   ├── dataset_loader.py
+│   │   ├── satellite_tile_handler.py
+│   │   └── geo_validation.py
+│   │
+│   ├── preprocessing/
+│   │   ├── normalization.py
+│   │   ├── augmentation.py
+│   │   └── geo_alignment.py
+│   │
+│   ├── models/
+│   │   ├── cnn_model.py
+│   │   ├── training_pipeline.py
+│   │   ├── evaluation.py
+│   │   └── registry.py
+│   │
+│   ├── explainability/
+│   │   ├── grad_cam.py
+│   │   └── attribution_maps.py
+│   │
+│   └── governance/
+│       ├── drift_detection.py
+│       ├── bias_checks.py
+│       └── confidence_calibration.py
+│
+├── pipelines/
+│   ├── training_pipeline.py
+│   ├── inference_pipeline.py
+│   └── batch_tile_processing.py
+│
+├── artifacts/
+│   ├── models/
+│   ├── predictions/
+│   └── reports/
+│
+├── configs/
+│   ├── model.yaml
+│   ├── inference.yaml
+│   └── thresholds.yaml
+│
+├── tests/
+│   ├── unit/
+│   ├── integration/
+│   └── geo_validation/
+│
+├── docs/
+│   ├── architecture.md
+│   ├── model_card.md
+│   ├── data_governance.md
+│   ├── deployment_guide.md
+│   └── regulatory_notes.md
+│
+└── ci/
+    └── github_actions.yml
+
 ```
 
 Each layer is independently testable and versioned.
